@@ -1,0 +1,54 @@
+{
+  "mcpServers": {
+    "periscope-workflows": {
+      "type": "http",
+      "url": "https://api.superagent.studio/mcp/workflows",
+      "description": "Workflow execution, monitoring, scheduling, and triggers"
+    },
+    "periscope-processes": {
+      "type": "http",
+      "url": "https://api.superagent.studio/mcp/processes",
+      "description": "BPMN process design, validation, versioning, and deployment"
+    },
+    "periscope-tasks": {
+      "type": "http",
+      "url": "https://api.superagent.studio/mcp/tasks",
+      "description": "Human task management for workflow interactions"
+    },
+    "periscope-agents": {
+      "type": "http",
+      "url": "https://api.superagent.studio/mcp/agents-core",
+      "description": "AI agent creation, configuration, and execution"
+    },
+    "periscope-mcp-servers": {
+      "type": "http",
+      "url": "https://api.superagent.studio/mcp/mcp-servers",
+      "description": "MCP server configuration and agent-to-server assignments"
+    },
+    "periscope-protocols": {
+      "type": "http",
+      "url": "https://api.superagent.studio/mcp/protocols",
+      "description": "Multi-protocol communication (A2A, AG-UI, MCP routing)"
+    },
+    "periscope-email": {
+      "type": "http",
+      "url": "https://api.superagent.studio/mcp/email",
+      "description": "Email sending and template management"
+    },
+    "periscope-documents": {
+      "type": "http",
+      "url": "https://api.superagent.studio/mcp/documents",
+      "description": "Document uploads and sandboxed script functions"
+    },
+    "periscope-users": {
+      "type": "http",
+      "url": "https://api.superagent.studio/mcp/users",
+      "description": "User lookup and management via Keycloak"
+    },
+    "periscope-system": {
+      "type": "http",
+      "url": "https://api.superagent.studio/mcp/system",
+      "description": "System administration and worker management"
+    }
+  }
+}

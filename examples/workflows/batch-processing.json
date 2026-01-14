@@ -1,0 +1,58 @@
+{
+  "name": "batch-document-processing",
+  "description": "Process multiple documents in parallel batch",
+  "workflow_type": "document_processing_workflow",
+  "execution_mode": "parallel",
+  "max_concurrent": 5,
+  "stop_on_error": false,
+  "workflows": [
+    {
+      "workflow_type": "document_processing_workflow",
+      "input_data": {
+        "document_id": "DOC-001",
+        "document_url": "s3://documents/invoice-001.pdf",
+        "document_type_hint": "invoice"
+      },
+      "business_key": "batch-001-doc-001",
+      "priority": 1
+    },
+    {
+      "workflow_type": "document_processing_workflow",
+      "input_data": {
+        "document_id": "DOC-002",
+        "document_url": "s3://documents/contract-001.pdf",
+        "document_type_hint": "contract"
+      },
+      "business_key": "batch-001-doc-002",
+      "priority": 1
+    },
+    {
+      "workflow_type": "document_processing_workflow",
+      "input_data": {
+        "document_id": "DOC-003",
+        "document_url": "s3://documents/report-001.pdf",
+        "document_type_hint": "report"
+      },
+      "business_key": "batch-001-doc-003",
+      "priority": 2
+    }
+  ],
+  "notification": {
+    "on_complete": {
+      "template": "send_task/notification",
+      "recipients": ["admin@company.com"],
+      "subject": "Batch Processing Complete"
+    },
+    "on_error": {
+      "template": "send_task/alert",
+      "recipients": ["admin@company.com"],
+      "subject": "Batch Processing Error",
+      "severity": "high"
+    }
+  },
+  "metadata": {
+    "created_by": "batch-scheduler",
+    "created_at": "2024-01-15T09:00:00Z",
+    "tags": ["batch", "document-processing", "automated"]
+  }
+}

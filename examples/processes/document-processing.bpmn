@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:periscope="http://periscope.dev/schema/bpmn"
+                  id="Definitions_DocumentProcessing"
+                  targetNamespace="http://periscope.ai/bpmn"
+                  exporter="Periscope"
+                  exporterVersion="1.0">
+
+  <bpmn:process id="document_processing_workflow" name="Document Processing Workflow" isExecutable="true">
+
+    <!-- Process Variables Definition -->
+    <bpmn:extensionElements>
+      <periscope:processVariables>
+        <periscope:processVariable name="document_id" type="string" required="true" isInput="true" description="Document identifier" />
+        <periscope:processVariable name="document_url" type="string" required="true" isInput="true" description="URL to document in S3/MinIO" />
+        <periscope:processVariable name="document_type_hint" type="string" required="false" isInput="true" description="Optional hint for document type" />
+        <periscope:processVariable name="extracted_text" type="string" required="false" description="Extracted text content" />
+        <periscope:processVariable name="document_type" type="string" required="false" description="Classified document type" />
+        <periscope:processVariable name="extracted_data" type="object" required="false" description="Structured extracted data" />
+        <periscope:processVariable name="verification_status" type="boolean" required="false" description="Human verification result" />
+      </periscope:processVariables>
+    </bpmn:extensionElements>
+
+    <!-- Start Event -->
+    <bpmn:startEvent id="start" name="Document Received">
+      <bpmn:outgoing>flow1</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <!-- Extract Text (AI Agent Service Task) -->
+    <bpmn:serviceTask id="extract_text" name="Extract Text">
+      <bpmn:extensionElements>
+        <periscope:aIAgentConfiguration agentId="document-analyzer" agentType="extraction" modelProvider="openai" modelName="gpt-4o" prompt="Extract all text content from the document. Preserve structure and formatting where possible.">
+          <periscope:inputMapping source="document_url" target="document_url" />
+          <periscope:inputMapping source="document_id" target="document_id" />
+          <periscope:outputMapping variable="extracted_text" errorVariable="extraction_error" />
+          <periscope:advancedSettings temperature="0.1" maxTokens="8000" timeoutSeconds="120" enableFallback="true" />
+          <periscope:structuredOutput enabled="true" strictMode="true">
+            <periscope:outputField name="text_content" fieldType="string" required="true" description="Extracted text" />
+            <periscope:outputField name="page_count" fieldType="integer" required="false" description="Number of pages" />
+            <periscope:outputField name="has_tables" fieldType="boolean" required="false" description="Document contains tables" />
+          </periscope:structuredOutput>
+        </periscope:aIAgentConfiguration>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow1</bpmn:incoming>
+      <bpmn:outgoing>flow2</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <!-- Classify Document (AI Agent Service Task) -->
+    <bpmn:serviceTask id="classify_document" name="Classify Document">
+      <bpmn:extensionElements>
+        <periscope:aIAgentConfiguration agentId="document-classifier" agentType="classification" modelProvider="openai" modelName="gpt-4o-mini" prompt="Classify this document into one of: invoice, contract, report, correspondence, other.">
+          <periscope:inputMapping source="extracted_text" target="text_content" />
+          <periscope:inputMapping source="document_type_hint" target="type_hint" />
+          <periscope:outputMapping variable="document_type" errorVariable="classification_error" />
+          <periscope:advancedSettings temperature="0.0" maxTokens="100" timeoutSeconds="30" />
+          <periscope:structuredOutput enabled="true" strictMode="true">
+            <periscope:outputField name="document_type" fieldType="enum" required="true" enumValues="invoice,contract,report,correspondence,other" description="Document classification" />
+            <periscope:outputField name="confidence" fieldType="number" required="true" description="Classification confidence 0-1" />
+          </periscope:structuredOutput>
+        </periscope:aIAgentConfiguration>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow2</bpmn:incoming>
+      <bpmn:outgoing>flow3</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <!-- Classification Gateway -->
+    <bpmn:exclusiveGateway id="classification_gateway" name="Document Type">
+      <bpmn:incoming>flow3</bpmn:incoming>
+      <bpmn:outgoing>flow_invoice</bpmn:outgoing>
+      <bpmn:outgoing>flow_contract</bpmn:outgoing>
+      <bpmn:outgoing>flow_other</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <!-- Invoice Processing (AI Agent) -->
+    <bpmn:serviceTask id="process_invoice" name="Process Invoice">
+      <bpmn:extensionElements>
+        <periscope:aIAgentConfiguration agentId="invoice-processor" agentType="extraction" modelProvider="openai" modelName="gpt-4o" prompt="Extract invoice details: vendor, invoice number, date, line items, totals, payment terms.">
+          <periscope:inputMapping source="extracted_text" target="text_content" />
+          <periscope:inputMapping source="document_url" target="document_url" />
+          <periscope:outputMapping variable="extracted_data" errorVariable="processing_error" />
+          <periscope:advancedSettings temperature="0.1" maxTokens="4000" timeoutSeconds="90" />
+          <periscope:validationConfig enabled="true" documentType="invoice" strictness="high">
+            <periscope:validationRules dataCompleteness="true" formatValidation="true" crossReference="false" businessCompliance="true" />
+          </periscope:validationConfig>
+          <periscope:structuredOutput enabled="true" strictMode="true">
+            <periscope:outputField name="vendor_name" fieldType="string" required="true" />
+            <periscope:outputField name="invoice_number" fieldType="string" required="true" />
+            <periscope:outputField name="invoice_date" fieldType="string" required="true" />
+            <periscope:outputField name="due_date" fieldType="string" required="false" />
+            <periscope:outputField name="total_amount" fieldType="number" required="true" />
+            <periscope:outputField name="currency" fieldType="string" required="true" />
+            <periscope:outputField name="line_items" fieldType="array" required="false" itemType="object" />
+          </periscope:structuredOutput>
+        </periscope:aIAgentConfiguration>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_invoice</bpmn:incoming>
+      <bpmn:outgoing>flow_invoice_to_review</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <!-- Contract Processing (AI Agent) -->
+    <bpmn:serviceTask id="process_contract" name="Process Contract">
+      <bpmn:extensionElements>
+        <periscope:aIAgentConfiguration agentId="contract-analyzer" agentType="extraction" modelProvider="anthropic" modelName="claude-3-5-sonnet" prompt="Analyze contract: parties, effective date, term, key obligations, termination clauses, payment terms.">
+          <periscope:inputMapping source="extracted_text" target="text_content" />
+          <periscope:outputMapping variable="extracted_data" errorVariable="processing_error" />
+          <periscope:advancedSettings temperature="0.2" maxTokens="6000" timeoutSeconds="120" requireHumanValidation="true" />
+          <periscope:structuredOutput enabled="true" strictMode="true">
+            <periscope:outputField name="parties" fieldType="array" required="true" itemType="string" />
+            <periscope:outputField name="effective_date" fieldType="string" required="true" />
+            <periscope:outputField name="expiration_date" fieldType="string" required="false" />
+            <periscope:outputField name="contract_value" fieldType="number" required="false" />
+            <periscope:outputField name="key_terms" fieldType="array" required="false" itemType="string" />
+            <periscope:outputField name="risk_flags" fieldType="array" required="false" itemType="string" />
+          </periscope:structuredOutput>
+        </periscope:aIAgentConfiguration>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_contract</bpmn:incoming>
+      <bpmn:outgoing>flow_contract_to_review</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <!-- General Processing (Script Task) -->
+    <bpmn:scriptTask id="process_other" name="General Processing">
+      <bpmn:extensionElements>
+        <periscope:scriptTaskConfiguration functionId="general-doc-processor" functionName="process_general_document" version="1" description="Process general documents with basic metadata extraction">
+          <periscope:scriptTaskInputMapping source="extracted_text" target="text_content" mappingType="variable" />
+          <periscope:scriptTaskInputMapping source="document_type" target="doc_type" mappingType="variable" />
+          <periscope:outputVariable>extracted_data</periscope:outputVariable>
+        </periscope:scriptTaskConfiguration>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_other</bpmn:incoming>
+      <bpmn:outgoing>flow_other_to_review</bpmn:outgoing>
+    </bpmn:scriptTask>
+
+    <!-- Human Review (User Task) -->
+    <bpmn:userTask id="human_review" name="Human Review">
+      <bpmn:extensionElements>
+        <periscope:taskDefinition assignee="${document_reviewer}" priority="2" outputVariable="review_result">
+          <periscope:formData>
+            <periscope:field name="verified" type="boolean" required="true" label="Data Verified Correct?" />
+            <periscope:field name="corrections" type="object" required="false" label="Corrections (JSON)" />
+            <periscope:field name="notes" type="text" required="false" label="Review Notes" />
+          </periscope:formData>
+          <periscope:emailNotification enabled="true" onAssignment="true" onDeadline="false" subject="Document Review Required: ${document_id}" template="task/assigned">
+            <periscope:recipients recipientType="role" value="document_reviewer" />
+          </periscope:emailNotification>
+        </periscope:taskDefinition>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_invoice_to_review</bpmn:incoming>
+      <bpmn:incoming>flow_contract_to_review</bpmn:incoming>
+      <bpmn:incoming>flow_other_to_review</bpmn:incoming>
+      <bpmn:outgoing>flow_review_to_store</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <!-- Store Results (Service Task) -->
+    <bpmn:serviceTask id="store_results" name="Store Results">
+      <bpmn:incoming>flow_review_to_store</bpmn:incoming>
+      <bpmn:outgoing>flow_store_to_end</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <!-- End Event -->
+    <bpmn:endEvent id="end" name="Processing Complete">
+      <bpmn:incoming>flow_store_to_end</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <!-- Sequence Flows -->
+    <bpmn:sequenceFlow id="flow1" sourceRef="start" targetRef="extract_text" />
+    <bpmn:sequenceFlow id="flow2" sourceRef="extract_text" targetRef="classify_document" />
+    <bpmn:sequenceFlow id="flow3" sourceRef="classify_document" targetRef="classification_gateway" />
+    <bpmn:sequenceFlow id="flow_invoice" name="type == 'invoice'" sourceRef="classification_gateway" targetRef="process_invoice">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">document_type == 'invoice'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_contract" name="type == 'contract'" sourceRef="classification_gateway" targetRef="process_contract">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">document_type == 'contract'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_other" name="other" sourceRef="classification_gateway" targetRef="process_other" />
+    <bpmn:sequenceFlow id="flow_invoice_to_review" sourceRef="process_invoice" targetRef="human_review" />
+    <bpmn:sequenceFlow id="flow_contract_to_review" sourceRef="process_contract" targetRef="human_review" />
+    <bpmn:sequenceFlow id="flow_other_to_review" sourceRef="process_other" targetRef="human_review" />
+    <bpmn:sequenceFlow id="flow_review_to_store" sourceRef="human_review" targetRef="store_results" />
+    <bpmn:sequenceFlow id="flow_store_to_end" sourceRef="store_results" targetRef="end" />
+
+  </bpmn:process>
+
+</bpmn:definitions>

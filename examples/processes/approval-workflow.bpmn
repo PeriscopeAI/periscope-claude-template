@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  xmlns:periscope="http://periscope.dev/schema/bpmn"
+                  id="Definitions_ApprovalWorkflow"
+                  targetNamespace="http://periscope.ai/bpmn"
+                  exporter="Periscope"
+                  exporterVersion="1.0">
+
+  <bpmn:process id="approval_workflow" name="Expense Approval Workflow" isExecutable="true">
+
+    <!-- Process Variables Definition -->
+    <bpmn:extensionElements>
+      <periscope:processVariables>
+        <periscope:processVariable name="request_id" type="string" required="true" isInput="true" description="Unique request identifier" />
+        <periscope:processVariable name="amount" type="number" required="true" isInput="true" description="Expense amount" />
+        <periscope:processVariable name="requester_email" type="string" required="true" isInput="true" description="Email of the requester" />
+        <periscope:processVariable name="approved" type="boolean" required="false" description="Approval status" />
+        <periscope:processVariable name="approver_comments" type="string" required="false" description="Comments from approver" />
+      </periscope:processVariables>
+    </bpmn:extensionElements>
+
+    <!-- Start Event -->
+    <bpmn:startEvent id="start_event" name="Request Submitted">
+      <bpmn:outgoing>flow_start_to_validate</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <!-- Validate Request (AI Agent Service Task) -->
+    <bpmn:serviceTask id="validate_request" name="Validate Request">
+      <bpmn:extensionElements>
+        <periscope:aIAgentConfiguration agentId="document-analyzer" agentType="validation" modelProvider="openai" modelName="gpt-4o" prompt="Validate the expense request for completeness and compliance.">
+          <periscope:inputMapping source="request_id" target="request_id" />
+          <periscope:inputMapping source="amount" target="amount" />
+          <periscope:outputMapping variable="validation_result" errorVariable="validation_error" />
+          <periscope:businessContext includeWorkflowContext="true" includeUserPermissions="true" includeComplianceLevel="false" />
+          <periscope:advancedSettings temperature="0.2" maxTokens="1000" timeoutSeconds="60" enableFallback="true" />
+        </periscope:aIAgentConfiguration>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_start_to_validate</bpmn:incoming>
+      <bpmn:outgoing>flow_validate_to_gateway</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <!-- Amount Check Gateway -->
+    <bpmn:exclusiveGateway id="amount_gateway" name="Amount Check">
+      <bpmn:incoming>flow_validate_to_gateway</bpmn:incoming>
+      <bpmn:outgoing>flow_gateway_to_manager</bpmn:outgoing>
+      <bpmn:outgoing>flow_gateway_to_director</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <!-- Manager Approval (User Task) -->
+    <bpmn:userTask id="manager_approval" name="Manager Approval">
+      <bpmn:extensionElements>
+        <periscope:taskDefinition assignee="${requester_manager}" priority="2" outputVariable="manager_decision">
+          <periscope:formData>
+            <periscope:field name="approved" type="boolean" required="true" label="Approve Request?" />
+            <periscope:field name="comments" type="text" required="false" label="Comments" />
+          </periscope:formData>
+          <periscope:emailNotification enabled="true" onAssignment="true" onDeadline="true" reminderInterval="PT4H" subject="Expense Approval Required: ${request_id}" template="task/assigned">
+            <periscope:recipients recipientType="assignee" value="${requester_manager}" />
+          </periscope:emailNotification>
+        </periscope:taskDefinition>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_gateway_to_manager</bpmn:incoming>
+      <bpmn:outgoing>flow_manager_to_merge</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <!-- Director Approval (User Task) -->
+    <bpmn:userTask id="director_approval" name="Director Approval">
+      <bpmn:extensionElements>
+        <periscope:taskDefinition assignee="${department_director}" priority="1" outputVariable="director_decision">
+          <periscope:formData>
+            <periscope:field name="approved" type="boolean" required="true" label="Approve Request?" />
+            <periscope:field name="comments" type="text" required="false" label="Comments" />
+            <periscope:field name="budget_code" type="string" required="true" label="Budget Code" />
+          </periscope:formData>
+          <periscope:emailNotification enabled="true" onAssignment="true" onDeadline="true" reminderInterval="PT2H" subject="High-Value Expense Approval: ${request_id}" template="task/assigned">
+            <periscope:recipients recipientType="assignee" value="${department_director}" />
+          </periscope:emailNotification>
+        </periscope:taskDefinition>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_gateway_to_director</bpmn:incoming>
+      <bpmn:outgoing>flow_director_to_merge</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <!-- Merge Gateway -->
+    <bpmn:exclusiveGateway id="merge_gateway" name="Merge">
+      <bpmn:incoming>flow_manager_to_merge</bpmn:incoming>
+      <bpmn:incoming>flow_director_to_merge</bpmn:incoming>
+      <bpmn:outgoing>flow_merge_to_decision</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <!-- Approval Decision Gateway -->
+    <bpmn:exclusiveGateway id="decision_gateway" name="Approved?">
+      <bpmn:incoming>flow_merge_to_decision</bpmn:incoming>
+      <bpmn:outgoing>flow_decision_to_process</bpmn:outgoing>
+      <bpmn:outgoing>flow_decision_to_reject</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <!-- Process Payment (Service Task) -->
+    <bpmn:serviceTask id="process_payment" name="Process Payment">
+      <bpmn:incoming>flow_decision_to_process</bpmn:incoming>
+      <bpmn:outgoing>flow_process_to_notify_approved</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <!-- Send Approval Notification (Send Task) -->
+    <bpmn:sendTask id="send_approval_notification" name="Send Approval Notification">
+      <bpmn:extensionElements>
+        <periscope:sendTaskConfiguration subject="Expense Request ${request_id} Approved" template="send_task/notification" priority="normal" trackOpens="true" outputVariable="email_result">
+          <periscope:to recipientType="variable" value="${requester_email}" />
+        </periscope:sendTaskConfiguration>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_process_to_notify_approved</bpmn:incoming>
+      <bpmn:outgoing>flow_notify_to_end</bpmn:outgoing>
+    </bpmn:sendTask>
+
+    <!-- Send Rejection Notification (Send Task) -->
+    <bpmn:sendTask id="send_rejection_notification" name="Send Rejection Notification">
+      <bpmn:extensionElements>
+        <periscope:sendTaskConfiguration subject="Expense Request ${request_id} Rejected" template="send_task/alert" priority="normal" outputVariable="email_result">
+          <periscope:to recipientType="variable" value="${requester_email}" />
+        </periscope:sendTaskConfiguration>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_decision_to_reject</bpmn:incoming>
+      <bpmn:outgoing>flow_reject_to_end</bpmn:outgoing>
+    </bpmn:sendTask>
+
+    <!-- End Event -->
+    <bpmn:endEvent id="end_event" name="Request Completed">
+      <bpmn:incoming>flow_notify_to_end</bpmn:incoming>
+      <bpmn:incoming>flow_reject_to_end</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <!-- Sequence Flows -->
+    <bpmn:sequenceFlow id="flow_start_to_validate" sourceRef="start_event" targetRef="validate_request" />
+    <bpmn:sequenceFlow id="flow_validate_to_gateway" sourceRef="validate_request" targetRef="amount_gateway" />
+    <bpmn:sequenceFlow id="flow_gateway_to_manager" name="amount &lt;= 5000" sourceRef="amount_gateway" targetRef="manager_approval">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">amount &lt;= 5000</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_gateway_to_director" name="amount &gt; 5000" sourceRef="amount_gateway" targetRef="director_approval">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">amount &gt; 5000</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_manager_to_merge" sourceRef="manager_approval" targetRef="merge_gateway" />
+    <bpmn:sequenceFlow id="flow_director_to_merge" sourceRef="director_approval" targetRef="merge_gateway" />
+    <bpmn:sequenceFlow id="flow_merge_to_decision" sourceRef="merge_gateway" targetRef="decision_gateway" />
+    <bpmn:sequenceFlow id="flow_decision_to_process" name="approved == true" sourceRef="decision_gateway" targetRef="process_payment">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">approved == true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_decision_to_reject" name="approved == false" sourceRef="decision_gateway" targetRef="send_rejection_notification">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">approved == false</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_process_to_notify_approved" sourceRef="process_payment" targetRef="send_approval_notification" />
+    <bpmn:sequenceFlow id="flow_notify_to_end" sourceRef="send_approval_notification" targetRef="end_event" />
+    <bpmn:sequenceFlow id="flow_reject_to_end" sourceRef="send_rejection_notification" targetRef="end_event" />
+
+  </bpmn:process>
+
+</bpmn:definitions>

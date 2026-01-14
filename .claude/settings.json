@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "WebFetch",
+      "WebSearch"
+    ],
+    "deny": []
+  },
+  "env": {
+    "PERISCOPE_API_URL": "http://localhost:8001",
+    "PERISCOPE_AGENT_API_URL": "http://localhost:8002"
+  }
+}
