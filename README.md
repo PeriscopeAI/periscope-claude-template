@@ -4,8 +4,8 @@ A Claude Code workspace template for interacting with the **Periscope** Agentic 
 
 ## Features
 
-- **6 Specialized Agents** with focused MCP tool access
-- **6 Skills (Slash Commands)** for common operations
+- **7 Specialized Agents** with focused MCP tool access (includes meta-agent)
+- **8 Skills (Slash Commands)** for common operations
 - **160+ MCP Tools** organized by domain
 - **Examples** for processes, agents, and workflows
 - **Documentation** for quick reference
@@ -40,8 +40,10 @@ A Claude Code workspace template for interacting with the **Periscope** Agentic 
 | `/process` | Design BPMN business processes |
 | `/workflow` | Execute and monitor workflows |
 | `/agent` | Create AI agents |
+| `/function` | Create RestrictedPython script functions |
 | `/task` | Manage human tasks |
 | `/deploy` | Deploy processes to Temporal |
+| `/analyze` | Diagnose failures and get optimization tips |
 | `/status` | Check platform health |
 
 ## Agent Architecture
@@ -52,10 +54,13 @@ Each agent has access to specific MCP servers to minimize context usage:
 |-------|-------------|-------|
 | workflow-operator | workflows, tasks | ~37 |
 | process-designer | processes | ~25 |
+| process-generator | processes, agents, documents | ~67 |
 | agent-manager | agents, mcp-servers | ~42 |
 | task-handler | tasks, users | ~15 |
 | integration-specialist | protocols, email, documents | ~48 |
 | system-admin | system, users | ~8 |
+
+**Note**: `process-generator` is a meta-agent that creates complete processes from natural language, including all necessary agents, functions, and BPMN definitions.
 
 ## Directory Structure
 

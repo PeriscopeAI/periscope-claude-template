@@ -11,8 +11,10 @@ Use these slash commands to interact with Periscope:
 | `/process` | Design a new BPMN business process |
 | `/workflow` | Start, monitor, or manage workflow executions |
 | `/agent` | Create and configure AI agents |
+| `/function` | Create RestrictedPython script functions |
 | `/task` | View and complete human tasks assigned to you |
 | `/deploy` | Deploy a process to Temporal |
+| `/analyze` | Diagnose failures and get optimization recommendations |
 | `/status` | Check platform health and system status |
 
 ## Platform Overview
@@ -31,10 +33,13 @@ This workspace uses specialized agents with focused tool access:
 |-------|---------|
 | `workflow-operator` | Start workflows, monitor execution, handle signals |
 | `process-designer` | Create BPMN processes, validate, deploy |
+| `process-generator` | **Meta-agent**: Create complete processes from natural language |
 | `agent-manager` | Register AI agents, configure MCP servers |
 | `task-handler` | Claim, complete, delegate human tasks |
 | `integration-specialist` | Email, documents, protocol coordination |
 | `system-admin` | Worker management, user administration |
+
+**Tip**: Use `process-generator` when you want to create an entire workflow from a description. It will create all necessary agents, functions, BPMN, and deploy automatically.
 
 ## Workspace Structure
 
