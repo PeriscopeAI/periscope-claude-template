@@ -1,87 +1,148 @@
 # Periscope Claude Template - Directory Structure
 
-This template provides a Claude Code workspace for interacting with the Periscope platform.
+A Claude Code workspace for transforming natural language into running business workflows.
 
 ```
 periscope-claude-template/
-├── CLAUDE.md                          # Main instructions for Claude
-├── .mcp.json                          # MCP server configurations
+├── CLAUDE.md                          # Quick reference for users
+├── .mcp.json                          # Platform connection (160+ tools)
 ├── .claude/
 │   ├── settings.json                  # Claude Code settings
 │   │
-│   ├── agents/                        # Specialized agents with focused tools
-│   │   ├── workflow-operator.md       # Start, monitor, manage workflows
-│   │   ├── process-designer.md        # Design BPMN processes
-│   │   ├── process-generator.md       # Meta-agent: complete process creation
-│   │   ├── agent-manager.md           # Create and execute AI agents
-│   │   ├── task-handler.md            # Manage human tasks
+│   ├── agents/                        # AI agents with focused capabilities
+│   │   ├── process-generator.md       # Meta-agent: end-to-end process creation
+│   │   ├── workflow-operator.md       # Execute and monitor workflows
+│   │   ├── process-designer.md        # Manual BPMN design
+│   │   ├── agent-manager.md           # AI agent configuration
+│   │   ├── task-handler.md            # Human task management
 │   │   ├── integration-specialist.md  # Protocols, email, documents
 │   │   └── system-admin.md            # System administration
 │   │
-│   └── skills/                        # User-invocable skills (slash commands)
-│       ├── process/
-│       │   └── SKILL.md               # /process - Design new processes
+│   └── skills/                        # User commands (slash commands)
+│       │
+│       │  # PRIMARY - Start here
+│       ├── generate/
+│       │   └── SKILL.md               # /generate - Natural language to process
 │       ├── workflow/
 │       │   └── SKILL.md               # /workflow - Execute workflows
-│       ├── agent/
-│       │   └── SKILL.md               # /agent - Create AI agents
-│       ├── function/
-│       │   └── SKILL.md               # /function - Create script functions
 │       ├── task/
-│       │   └── SKILL.md               # /task - Manage human tasks
-│       ├── deploy/
-│       │   └── SKILL.md               # /deploy - Deploy processes
+│       │   └── SKILL.md               # /task - Handle human tasks
+│       │
+│       │  # OPERATIONS - Manage running processes
 │       ├── analyze/
-│       │   └── SKILL.md               # /analyze - Diagnose and optimize
-│       └── status/
-│           └── SKILL.md               # /status - Check system status
+│       │   └── SKILL.md               # /analyze - Diagnose issues
+│       ├── optimize/
+│       │   └── SKILL.md               # /optimize - Improve performance
+│       ├── status/
+│       │   └── SKILL.md               # /status - System health
+│       │
+│       │  # ADVANCED - For power users
+│       ├── process/
+│       │   └── SKILL.md               # /process - Manual BPMN design
+│       ├── agent/
+│       │   └── SKILL.md               # /agent - Configure AI agents
+│       ├── function/
+│       │   └── SKILL.md               # /function - Script functions
+│       └── deploy/
+│           └── SKILL.md               # /deploy - Manual deployment
 │
-├── workspace/                         # User workspace for designs
-│   ├── processes/                     # BPMN process definitions
+├── workspace/                         # User's work area
+│   ├── processes/                     # BPMN definitions (auto-generated)
 │   │   └── .gitkeep
-│   ├── agents/                        # Agent configurations
+│   ├── agents/                        # Agent configs (auto-generated)
 │   │   └── .gitkeep
-│   └── workflows/                     # Workflow templates
+│   └── workflows/                     # Templates and history
 │       └── .gitkeep
 │
-├── examples/                          # Example configurations
+├── examples/                          # Sample configurations
 │   ├── processes/
 │   │   ├── approval-workflow.bpmn
 │   │   └── document-processing.bpmn
 │   ├── agents/
 │   │   └── document-analyzer.json
 │   ├── functions/
-│   │   └── expense-validator.py       # RestrictedPython function example
+│   │   └── expense-validator.py
 │   └── workflows/
 │       └── batch-processing.json
 │
-└── docs/                              # Quick reference documentation
+└── docs/                              # Help documentation
     ├── getting-started.md
     ├── mcp-tools-reference.md
     └── troubleshooting.md
 ```
 
-## Agent Responsibilities
+## Skill Categories
 
-| Agent | MCP Servers | Purpose |
-|-------|-------------|---------|
-| workflow-operator | workflows, tasks | Runtime workflow operations |
-| process-designer | processes | BPMN design and deployment |
-| process-generator | processes, agents, documents | **Meta-agent**: End-to-end process creation |
-| agent-manager | agents, mcp-servers | AI agent lifecycle |
-| task-handler | tasks, users | Human task management |
-| integration-specialist | protocols, email, documents | Integration operations |
-| system-admin | system, users | Administration |
+### Primary Skills (Start Here)
 
-## Skills (Slash Commands)
+| Skill | Purpose | Delegates To |
+|-------|---------|--------------|
+| `/generate` | Create complete process from description | process-generator |
+| `/workflow` | Start and manage executions | workflow-operator |
+| `/task` | Handle assigned tasks | task-handler |
 
-| Skill | Delegates To | Purpose |
-|-------|--------------|---------|
-| /process | process-designer | Design a new BPMN process |
-| /workflow | workflow-operator | Start and manage workflows |
-| /agent | agent-manager | Create and configure AI agents |
-| /function | process-designer | Create RestrictedPython script functions |
-| /task | task-handler | View and complete human tasks |
-| /deploy | process-designer | Deploy process to Temporal |
-| /analyze | workflow-operator | Diagnose failures and optimize |
-| /status | system-admin | Check platform health |
+### Operations Skills
+
+| Skill | Purpose | Delegates To |
+|-------|---------|--------------|
+| `/analyze` | Diagnose failures | workflow-operator |
+| `/optimize` | Improve performance | workflow-operator |
+| `/status` | Check system health | system-admin |
+
+### Advanced Skills
+
+| Skill | Purpose | Delegates To |
+|-------|---------|--------------|
+| `/process` | Manual BPMN design | process-designer |
+| `/agent` | Configure AI agents | agent-manager |
+| `/function` | Create script functions | process-designer |
+| `/deploy` | Manual deployment | process-designer |
+
+## Agent Capabilities
+
+| Agent | MCP Servers | What It Does |
+|-------|-------------|--------------|
+| process-generator | processes, agents, documents | Creates entire processes from natural language |
+| workflow-operator | workflows, tasks | Runs workflows, monitors execution |
+| process-designer | processes | Designs BPMN, validates, deploys |
+| agent-manager | agents, mcp-servers | Manages AI agent lifecycle |
+| task-handler | tasks, users | Handles human task interactions |
+| integration-specialist | protocols, email, documents | Manages integrations |
+| system-admin | system, users | Platform administration |
+
+## User Journey
+
+```
+1. /generate "Create an expense approval workflow..."
+   └── process-generator agent takes over
+       ├── Understands requirements
+       ├── Creates AI agents (if needed)
+       ├── Creates functions (if needed)
+       ├── Generates BPMN
+       ├── Deploys to Temporal
+       └── Runs test execution
+
+2. /workflow start expense-approval {"amount": 500}
+   └── workflow-operator agent takes over
+       ├── Starts workflow
+       ├── Returns workflow ID
+       └── Workflow runs on Temporal
+
+3. /task
+   └── task-handler agent takes over
+       ├── Shows pending tasks
+       ├── User completes task
+       └── Workflow continues
+
+4. /analyze expense-approval
+   └── workflow-operator agent takes over
+       ├── Analyzes recent executions
+       ├── Identifies issues
+       └── Suggests improvements
+
+5. /optimize expense-approval
+   └── workflow-operator agent takes over
+       ├── Analyzes performance
+       ├── Suggests optimizations
+       └── Applies improvements
+```
