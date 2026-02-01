@@ -7,7 +7,7 @@ This document provides a quick reference for all MCP tools available in the Peri
 | MCP Server | Tools | Agent |
 |------------|-------|-------|
 | periscope-workflows-dev | 27 | workflow-operator |
-| periscope-processes-dev | 25 | process-designer |
+| periscope-processes-dev | 29 | process-designer |
 | periscope-tasks-dev | 10 | workflow-operator, task-handler |
 | periscope-agents-dev | 27 | agent-manager |
 | periscope-mcp-servers-dev | 15 | agent-manager |
@@ -16,8 +16,9 @@ This document provides a quick reference for all MCP tools available in the Peri
 | periscope-documents-dev | 15 | integration-specialist |
 | periscope-users-dev | 5 | task-handler, system-admin |
 | periscope-system-dev | 3 | system-admin |
+| periscope-context-dev | 5 | all agents |
 
-**Total: ~160 tools**
+**Total: ~169 tools**
 
 ---
 
@@ -70,12 +71,24 @@ This document provides a quick reference for all MCP tools available in the Peri
 ### Process CRUD
 | Tool | Description |
 |------|-------------|
-| `create_process` | Create process definition |
+| `create_process` | Create process definition (inline BPMN) |
 | `list_processes` | List processes |
 | `get_process` | Get process by ID |
 | `update_process` | Update process |
 | `delete_process` | Delete process |
 | `get_process_bpmn` | Get BPMN XML |
+
+### File Upload (Token-Efficient)
+| Tool | Description |
+|------|-------------|
+| `request_bpmn_upload` | Get pre-signed URL for BPMN upload |
+| `create_process_from_file_ref` | Create process from uploaded file |
+| `update_process_from_file_ref` | Update process from uploaded file |
+
+> **Token Efficiency**: Use file upload flow (~70 tokens) instead of inline BPMN (~250+ tokens) for large files.
+> 1. Call `request_bpmn_upload` to get upload URL
+> 2. Upload file directly to MinIO via pre-signed URL
+> 3. Call `create_process_from_file_ref` with file_id
 
 ### Lifecycle
 | Tool | Description |
@@ -103,6 +116,7 @@ This document provides a quick reference for all MCP tools available in the Peri
 | `deploy_process` | Deploy to Temporal |
 | `list_deployments` | List deployments |
 | `get_deployment_info` | Deployment details |
+| `get_deployment_stats` | Deployment statistics |
 | `undeploy_workflow` | Remove deployment |
 | `redeploy_workflow` | Redeploy |
 
@@ -304,3 +318,17 @@ This document provides a quick reference for all MCP tools available in the Peri
 | `restart_workers` | Restart workers |
 
 **Note**: Requires `system_administrator` role.
+
+---
+
+## Context Tools (periscope-context-dev)
+
+| Tool | Description |
+|------|-------------|
+| `list_my_organizations` | List user's organizations |
+| `list_my_projects` | List accessible projects |
+| `get_current_context` | Get active org/project context |
+| `set_context` | Set default org/project context |
+| `clear_context` | Clear stored context |
+
+**Note**: Context is stored in Redis with 30-day TTL. Used by MCP clients to maintain tenant context across requests.

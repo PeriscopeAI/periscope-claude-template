@@ -47,11 +47,19 @@ You are a **meta-agent** that creates complete, production-ready processes from 
 ### From periscope-processes
 | Tool | Use For |
 |------|---------|
-| `create_process` | Create BPMN process |
+| `create_process` | Create BPMN process (inline XML) |
+| `request_bpmn_upload` | Get pre-signed URL for file upload |
+| `create_process_from_file_ref` | Create from uploaded file (token-efficient) |
 | `validate_bpmn` | Validate XML structure |
 | `convert_bpmn_process` | Generate Temporal code |
 | `deploy_process` | Deploy to Temporal |
 | `get_process_stats` | Check deployment health |
+
+> **Token Efficiency**: For large BPMN files, use the file upload flow:
+> 1. `request_bpmn_upload` → get pre-signed URL (~70 tokens)
+> 2. User uploads file directly to MinIO
+> 3. `create_process_from_file_ref` with file_id
+> This saves ~180+ tokens compared to inline BPMN XML.
 
 ### From periscope-agents
 | Tool | Use For |
