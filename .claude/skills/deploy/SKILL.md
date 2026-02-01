@@ -12,9 +12,8 @@ Use this skill to deploy BPMN processes to Temporal and manage workflow deployme
 
 1. **Deploy processes** - Deploy a process to Temporal
 2. **List deployments** - View all active deployments
-3. **Undeploy workflows** - Remove deployed workflows
-4. **Redeploy workflows** - Update existing deployments
-5. **Check health** - Verify deployment system status
+3. **Check health** - Verify deployment system status
+4. **Force discovery** - Trigger workflow discovery check
 
 ## How to Use
 
@@ -22,9 +21,8 @@ Describe what you want to deploy:
 
 - "Deploy the approval process"
 - "List all deployed workflows"
-- "Undeploy workflow xyz"
-- "Redeploy the invoice processing workflow"
 - "Check deployment health"
+- "Get worker status"
 
 ## Deployment Process
 
@@ -89,15 +87,5 @@ After successful deployment:
 ## Delegated Agent
 
 This skill delegates to the **process-designer** agent which has access to:
-- `periscope-processes-dev` MCP server (29 tools)
+- `periscope-processes-dev` MCP server (18 tools)
 - `periscope-context-dev` MCP server (5 tools)
-
-The agent can also check worker status via coordination with system-admin.
-
-## Deployment Statistics
-
-Use `get_deployment_stats` to view:
-- Total deployments
-- Static vs generated workflows
-- Deployment status counts
-- Recent deployments

@@ -62,17 +62,17 @@ Simply describe the business process you want to create. For example:
 ## Delegated Agent
 
 This skill delegates to the **process-designer** agent which has access to:
-- `periscope-processes-dev` MCP server (29 tools)
+- `periscope-processes-dev` MCP server (18 tools)
 - `periscope-context-dev` MCP server (5 tools)
 
-## Token-Efficient File Upload
+## File Upload Flow (Required for BPMN)
 
-For large BPMN files, use the file upload flow:
+Always use the file upload flow for BPMN operations:
 1. `request_bpmn_upload` → get pre-signed URL
 2. Upload file directly to MinIO
 3. `create_process_from_file_ref` with file_id
 
-This saves ~180 tokens compared to inline BPMN XML.
+This is the only way to create/update processes via MCP.
 
 ## Output
 

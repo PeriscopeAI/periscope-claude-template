@@ -4,8 +4,8 @@ description: Meta-agent that creates complete processes from natural language re
 model: sonnet
 allowedMcpServers:
   - periscope-processes
-  - periscope-agents
-  - periscope-documents
+  - periscope-agents-core
+  - periscope-script-functions
   - periscope-context
 ---
 
@@ -45,37 +45,42 @@ You are a **meta-agent** that creates complete, production-ready processes from 
 
 ## Available Tools
 
-### From periscope-processes
+### From periscope-processes (18 tools)
 | Tool | Use For |
 |------|---------|
-| `create_process` | Create BPMN process (inline XML) |
 | `request_bpmn_upload` | Get pre-signed URL for file upload |
-| `create_process_from_file_ref` | Create from uploaded file (token-efficient) |
-| `validate_bpmn` | Validate XML structure |
-| `convert_bpmn_process` | Generate Temporal code |
+| `create_process_from_file_ref` | Create from uploaded file |
+| `update_process_from_file_ref` | Update from uploaded file |
+| `list_processes` | List processes with filters |
+| `get_process` | Get process details |
+| `get_process_bpmn` | Get BPMN XML |
+| `archive_process` | Soft-delete process |
 | `deploy_process` | Deploy to Temporal |
-| `get_process_stats` | Check deployment health |
+| `get_process_deployments` | List deployments |
 
-> **Token Efficiency**: For large BPMN files, use the file upload flow:
+> **File Upload Flow (Required)**: BPMN operations use pre-signed URLs:
 > 1. `request_bpmn_upload` → get pre-signed URL (~70 tokens)
 > 2. User uploads file directly to MinIO
 > 3. `create_process_from_file_ref` with file_id
-> This saves ~180+ tokens compared to inline BPMN XML.
 
-### From periscope-agents
+### From periscope-agents-core (15 tools)
 | Tool | Use For |
 |------|---------|
-| `create_agent_enhanced` | Create AI agents |
-| `prompt_assist` | Generate/improve prompts |
-| `select_optimal_model` | Choose best model |
-| `get_agent_capabilities` | Verify capabilities |
+| `create_agent_enhanced` | Create AI agents with full config |
+| `list_agents_enhanced` | List agents with filtering |
+| `get_agent_enhanced` | Get agent with metrics |
+| `execute_agent_enhanced` | Execute agent |
+| `assign_tools_to_agent` | Assign MCP tools |
+| `update_agent_config` | Update configuration |
 
-### From periscope-documents
+### From periscope-script-functions (13 tools)
 | Tool | Use For |
 |------|---------|
-| `create_script_function` | Create functions |
-| `test_script_function` | Test with sample data |
-| `publish_script_function` | Make production-ready |
+| `create_function` | Create script function |
+| `test_function` | Test with sample data |
+| `test_code` | Test code snippet |
+| `validate_code` | Validate Python code |
+| `publish_version` | Make production-ready |
 
 ## Component Decision Matrix
 

@@ -101,4 +101,4 @@ You don't need to know any of this to use Periscope.
 
 Your workspace connects to: `https://api.superagent.studio`
 
-All 160+ tools are available through natural language - just describe what you need.
+~69 MCP tools are available across 9 servers. Just describe what you need.
