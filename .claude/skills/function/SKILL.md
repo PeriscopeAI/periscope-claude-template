@@ -17,6 +17,21 @@ Script functions provide **sandboxed Python execution** for:
 - Date/time calculations
 - Text processing and formatting
 
+## CRITICAL: Function Signature Requirement
+
+**All functions MUST use this exact signature:**
+
+```python
+def execute(input_data: dict) -> dict:
+    # Your logic here
+    return {"result": value}
+```
+
+- Function name MUST be `execute`
+- Parameter MUST be `input_data: dict`
+- Return type MUST be `dict`
+- Access inputs via `input_data.get("param_name")`
+
 ## When to Use Functions vs Agents
 
 | Need | Solution |
@@ -38,8 +53,10 @@ Functions run in a security sandbox with limitations:
 ## Available Built-ins
 
 ```python
-# Allowed
+# Allowed modules
 math, datetime, json, re, decimal, collections
+
+# Allowed builtins
 len, str, int, float, bool, list, dict, tuple, set
 range, enumerate, zip, map, filter, sorted, sum, min, max
 ```
@@ -55,9 +72,14 @@ range, enumerate, zip, map, filter, sorted, sum, min, max
 
 ### Variance Calculator
 ```python
-def calculate_variance(invoice_total: float, po_total: float) -> dict:
+def execute(input_data: dict) -> dict:
+    """Calculate variance between invoice and PO amounts."""
+    invoice_total = input_data.get("invoice_total", 0)
+    po_total = input_data.get("po_total", 0)
+
     variance = invoice_total - po_total
     variance_pct = (variance / po_total * 100) if po_total else 0
+
     return {
         "variance_amount": round(variance, 2),
         "variance_percentage": round(variance_pct, 2),
@@ -67,7 +89,12 @@ def calculate_variance(invoice_total: float, po_total: float) -> dict:
 
 ### Business Rule Validator
 ```python
-def validate_expense(amount: float, category: str, receipt_present: bool) -> dict:
+def execute(input_data: dict) -> dict:
+    """Validate expense claim against business rules."""
+    amount = input_data.get("amount", 0)
+    category = input_data.get("category", "")
+    receipt_present = input_data.get("receipt_present", False)
+
     errors = []
     if amount <= 0:
         errors.append("Amount must be positive")
@@ -75,12 +102,17 @@ def validate_expense(amount: float, category: str, receipt_present: bool) -> dic
         errors.append("Receipt required for amounts over $100")
     if category not in ["travel", "supplies", "meals", "other"]:
         errors.append(f"Invalid category: {category}")
+
     return {"valid": len(errors) == 0, "errors": errors}
 ```
 
 ### JSON Path Extractor
 ```python
-def extract_fields(data: dict, paths: list) -> dict:
+def execute(input_data: dict) -> dict:
+    """Extract fields from nested data using dot notation paths."""
+    data = input_data.get("data", {})
+    paths = input_data.get("paths", [])
+
     def get_path(obj, path):
         for key in path.split('.'):
             if isinstance(obj, dict):
@@ -88,34 +120,47 @@ def extract_fields(data: dict, paths: list) -> dict:
             else:
                 return None
         return obj
+
     return {path: get_path(data, path) for path in paths}
 ```
 
 ### Date Calculator
 ```python
-from datetime import datetime, timedelta
+def execute(input_data: dict) -> dict:
+    """Calculate due date adding business days."""
+    from datetime import datetime, timedelta
 
-def calculate_due_date(start_date: str, business_days: int) -> dict:
+    start_date = input_data.get("start_date")
+    business_days = input_data.get("business_days", 0)
+
     date = datetime.strptime(start_date, "%Y-%m-%d")
+    start = date
     days_added = 0
+
     while days_added < business_days:
         date += timedelta(days=1)
         if date.weekday() < 5:  # Monday = 0, Friday = 4
             days_added += 1
+
     return {
         "due_date": date.strftime("%Y-%m-%d"),
-        "calendar_days": (date - datetime.strptime(start_date, "%Y-%m-%d")).days
+        "calendar_days": (date - start).days
     }
 ```
 
 ### Amount Formatter
 ```python
-from decimal import Decimal, ROUND_HALF_UP
+def execute(input_data: dict) -> dict:
+    """Format currency amount for display."""
+    from decimal import Decimal, ROUND_HALF_UP
 
-def format_currency(amount: float, currency: str = "USD") -> dict:
+    amount = input_data.get("amount", 0)
+    currency = input_data.get("currency", "USD")
+
     symbols = {"USD": "$", "EUR": "€", "GBP": "£"}
     d = Decimal(str(amount)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
     symbol = symbols.get(currency, currency + " ")
+
     return {
         "formatted": f"{symbol}{d:,}",
         "numeric": float(d),
@@ -123,41 +168,12 @@ def format_currency(amount: float, currency: str = "USD") -> dict:
     }
 ```
 
-## API Usage
-
-### Create Function
-```
-POST /api/v1/orchestration/script-functions
-{
-  "name": "calculate_variance",
-  "description": "Calculate variance between invoice and PO amounts",
-  "code": "def calculate_variance(...): ...",
-  "input_schema": {"invoice_total": "float", "po_total": "float"},
-  "output_schema": {"variance_amount": "float", "variance_percentage": "float"}
-}
-```
-
-### Test Function
-```
-POST /api/v1/orchestration/script-functions/{id}/test
-{
-  "test_input": {"invoice_total": 1050.00, "po_total": 1000.00}
-}
-```
-
-### Publish Function
-```
-POST /api/v1/orchestration/script-functions/{id}/publish
-```
-
-## Example Conversation
-
-**User**: Create a function to validate purchase order line items
-
-**Assistant**: I'll create a validation function for PO line items:
-
+### PO Line Item Validator
 ```python
-def validate_po_lines(lines: list) -> dict:
+def execute(input_data: dict) -> dict:
+    """Validate purchase order line items."""
+    lines = input_data.get("lines", [])
+
     errors = []
     total = 0
 
@@ -179,11 +195,52 @@ def validate_po_lines(lines: list) -> dict:
     }
 ```
 
-Want me to create this function and test it with sample data?
+## Input/Output Schema
+
+When creating functions, define schemas for validation:
+
+```json
+{
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "invoice_total": {"type": "number"},
+      "po_total": {"type": "number"}
+    },
+    "required": ["invoice_total", "po_total"]
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "variance_amount": {"type": "number"},
+      "variance_percentage": {"type": "number"},
+      "exceeds_threshold": {"type": "boolean"}
+    }
+  }
+}
+```
+
+## Function Lifecycle
+
+1. **Draft**: Function is created but not usable in workflows
+2. **Published**: Function is versioned and available for use
+3. Each publish creates an **immutable version snapshot**
+
+## MCP Tools for Functions
+
+| Tool | Purpose |
+|------|---------|
+| `create_function` | Create new function (draft) |
+| `list_functions` | List all functions |
+| `get_function` | Get function details |
+| `update_function` | Update draft function |
+| `test_function` | Test with sample input |
+| `publish_version` | Publish for workflow use |
+| `list_versions` | Get version history |
 
 ## Output
 
 Functions are stored in the Periscope database and can be:
-- Called from BPMN service tasks
-- Invoked by AI agents as tools
+- Called from BPMN script tasks via `periscope:ScriptTaskConfiguration`
+- Referenced by `functionName` or `functionId`
 - Used in workflow conditions

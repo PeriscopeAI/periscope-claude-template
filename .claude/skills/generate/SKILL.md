@@ -9,11 +9,14 @@ delegates-to: process-generator
 **The fastest path from idea to running workflow.**
 
 Simply describe what you want, and the AI will:
-1. Understand your requirements
-2. Design the process flow
-3. Create necessary AI agents and functions
-4. Deploy to Temporal
-5. Run a test execution
+1. Set organization/project context
+2. Understand your requirements
+3. Design the process flow
+4. Create necessary AI agents and functions
+5. Generate BPMN with correct Periscope namespace
+6. **Validate locally** before upload
+7. Deploy to Temporal
+8. Run a test execution
 
 ## How to Use
 
@@ -124,6 +127,34 @@ notifications at each stage.
 
 3. Monitor in dashboard:
    http://localhost:3000/processes/proc_abc123
+```
+
+## Behind the Scenes
+
+The generate skill follows these critical steps:
+
+### 1. Context Setup
+Always sets org/project context first using the context MCP server.
+
+### 2. BPMN Generation Rules
+- Uses `periscope` namespace (NOT `camunda`)
+- Includes `bpmndi:BPMNEdge` for all sequence flows (visual connections)
+- Sets `default` flows on exclusive gateways
+- Configures proper Periscope extension elements
+
+### 3. Local Validation
+Before uploading, BPMN is validated locally:
+```bash
+python3 .claude/skills/process/scripts/validate-bpmn.py <file.bpmn> --verbose
+```
+This catches errors early and saves API round-trips.
+
+### 4. Script Function Signature
+All generated functions use the required signature:
+```python
+def execute(input_data: dict) -> dict:
+    # Access inputs via input_data.get("param")
+    return {"result": value}
 ```
 
 ## After Generation
