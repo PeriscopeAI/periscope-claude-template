@@ -1,7 +1,7 @@
 ---
 name: function
 description: Create and manage RestrictedPython script functions for deterministic workflow logic
-delegates-to: process-designer
+delegates-to: integration-specialist
 ---
 
 # /function - Create Script Functions

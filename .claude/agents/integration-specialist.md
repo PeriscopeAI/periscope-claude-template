@@ -6,6 +6,7 @@ allowedMcpServers:
   - periscope-protocols
   - periscope-email
   - periscope-documents
+  - periscope-context
 ---
 
 # Integration Specialist Agent

@@ -5,6 +5,7 @@ model: haiku
 allowedMcpServers:
   - periscope-tasks
   - periscope-users
+  - periscope-context
 ---
 
 # Task Handler Agent

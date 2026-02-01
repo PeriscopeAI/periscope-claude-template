@@ -5,6 +5,7 @@ model: sonnet
 allowedMcpServers:
   - periscope-agents
   - periscope-mcp-servers
+  - periscope-context
 ---
 
 # Agent Manager
@@ -102,8 +103,8 @@ You do NOT have access to:
 
 | Provider | Models |
 |----------|--------|
-| OpenAI | gpt-4o, gpt-4o-mini, gpt-4-turbo |
-| Anthropic | claude-3-5-sonnet, claude-3-5-haiku, claude-3-opus |
+| OpenAI | gpt-4o, gpt-4o-mini, o1, o1-mini |
+| Anthropic | claude-sonnet-4, claude-opus-4, claude-haiku-3.5 |
 | Google | gemini-2.0-flash, gemini-1.5-pro |
 | OpenRouter | Various via API |
 

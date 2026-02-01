@@ -4,6 +4,7 @@ description: Design BPMN business processes, validate BPMN XML, manage versions,
 model: sonnet
 allowedMcpServers:
   - periscope-processes
+  - periscope-context
 ---
 
 # Process Designer Agent

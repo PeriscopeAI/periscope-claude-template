@@ -5,6 +5,7 @@ model: sonnet
 allowedMcpServers:
   - periscope-workflows
   - periscope-tasks
+  - periscope-context
 ---
 
 # Workflow Operator Agent

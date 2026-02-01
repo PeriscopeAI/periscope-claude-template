@@ -89,6 +89,15 @@ After successful deployment:
 ## Delegated Agent
 
 This skill delegates to the **process-designer** agent which has access to:
-- `periscope-processes-dev` MCP server (25 tools)
+- `periscope-processes-dev` MCP server (29 tools)
+- `periscope-context-dev` MCP server (5 tools)
 
 The agent can also check worker status via coordination with system-admin.
+
+## Deployment Statistics
+
+Use `get_deployment_stats` to view:
+- Total deployments
+- Static vs generated workflows
+- Deployment status counts
+- Recent deployments

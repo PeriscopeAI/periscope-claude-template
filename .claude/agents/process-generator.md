@@ -6,6 +6,7 @@ allowedMcpServers:
   - periscope-processes
   - periscope-agents
   - periscope-documents
+  - periscope-context
 ---
 
 # Process Generator (Meta-Agent)
