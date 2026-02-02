@@ -147,4 +147,59 @@ def execute(input_data: dict) -> dict:
 
 ---
 
-*Last updated: 2026-02-01*
+## Workflow Deployment
+
+### Issue: Workers Don't Auto-Reload New Workflows
+
+**Status**: Open Bug
+**Severity**: High
+**Affected**: `deploy_process` API, workflow execution
+
+**Description**: After deploying a new process with `auto_restart_workers=true`, workers may not actually reload to pick up the new workflow definition. Starting a workflow immediately after deployment results in `WORKFLOW_TASK_FAILED` in the history.
+
+**Workaround**: Explicitly restart workers after deployment:
+```
+1. deploy_process(process_id, ..., auto_restart_workers=true)
+2. mcp__periscope-system__restart_workers()  # Explicit restart
+3. Wait 5-10 seconds
+4. create_workflow(...)
+```
+
+---
+
+### Issue: BPMN Task Names with Special Characters
+
+**Status**: By Design
+**Severity**: Medium
+**Affected**: BPMN validation
+
+**Description**: Task names containing special characters like `&` cause validation errors even when properly XML-escaped (`&amp;`). The error message mentions invalid activity name.
+
+**Workaround**: Use plain text in task names:
+- "Extract and Validate" instead of "Extract & Validate"
+- Avoid `&`, `<`, `>`, quotes in names
+
+---
+
+## BPMN Extension Elements
+
+### Issue: Extension Element Names Must Be PascalCase
+
+**Status**: By Design
+**Severity**: High
+**Affected**: BPMN parsing, local validator, workflow execution
+
+**Description**: Periscope extension element names must use PascalCase. Using camelCase results in elements not being recognized.
+
+| Wrong (camelCase) | Correct (PascalCase) |
+|-------------------|----------------------|
+| `periscope:aIAgentConfiguration` | `periscope:AIAgentConfiguration` |
+| `periscope:scriptTaskConfiguration` | `periscope:ScriptTaskConfiguration` |
+| `periscope:taskDefinition` | `periscope:TaskDefinition` |
+| `periscope:sendTaskConfiguration` | `periscope:SendTaskConfiguration` |
+
+**Workaround**: Always use PascalCase for Periscope extension elements.
+
+---
+
+*Last updated: 2026-02-02*
