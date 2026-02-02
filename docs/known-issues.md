@@ -8,7 +8,7 @@ This document tracks known issues and workarounds for the Periscope platform.
 
 ### Issue: Script Functions Context Not Propagating
 
-**Status**: Open Bug
+**Status**: ~~Open Bug~~ **RESOLVED**
 **Severity**: High
 **Affected**: `periscope-script-functions` MCP server
 
@@ -19,11 +19,16 @@ null value in column 'project_id' of relation 'script_functions' violates not-nu
 
 **Root Cause**: The script-functions MCP server doesn't receive the project context from Redis/session.
 
-**Workaround**: None available. The `create_function` API does not accept explicit `org_id`/`project_id` parameters unlike other MCP servers.
-
-**Affected Operations**:
-- `create_function`
-- Possibly other script-functions operations
+**Resolution**: The `create_function` API now accepts explicit `organization_id` and `project_id` parameters. Pass these explicitly when creating functions:
+```python
+create_function(
+    name="my_function",
+    code="...",
+    organization_id="<org-uuid>",
+    project_id="<project-uuid>",
+    ...
+)
+```
 
 ---
 
@@ -97,17 +102,17 @@ Replace all Camunda elements:
 
 ### Issue: Inconsistent org_id/project_id Parameter Support
 
-**Status**: Inconsistency
+**Status**: ~~Inconsistency~~ **RESOLVED**
 **Severity**: Medium
 **Affected**: Various MCP servers
 
-**Description**: Not all MCP server `create_*` operations support explicit `organization_id`/`project_id` parameters.
+**Description**: Previously, not all MCP server `create_*` operations supported explicit `organization_id`/`project_id` parameters. This has been fixed.
 
 | MCP Server | Supports Explicit IDs? | Workaround |
 |------------|------------------------|------------|
 | `periscope-agents-core` | YES | Pass explicit params |
 | `periscope-processes` | YES | Pass explicit params |
-| `periscope-script-functions` | NO | Blocked - no workaround |
+| `periscope-script-functions` | YES | Pass explicit params (fixed!) |
 
 **Recommendation**: Always pass explicit `organization_id` and `project_id` when the API supports it, as context auto-propagation is unreliable.
 
