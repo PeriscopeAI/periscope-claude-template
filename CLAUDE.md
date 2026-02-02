@@ -1,69 +1,138 @@
 # Periscope Workspace
 
-This workspace is configured for interacting with the **Periscope** Agentic Business Workflow Orchestration platform.
+Transform your business processes into running workflows using natural language.
 
-## Quick Start
+## The Fastest Way to Start
 
-Use these slash commands to interact with Periscope:
+**Just describe what you want:**
 
-| Command | Description |
-|---------|-------------|
-| `/process` | Design a new BPMN business process |
-| `/workflow` | Start, monitor, or manage workflow executions |
+```
+/generate When a customer submits a support ticket, classify its urgency,
+route to the right team, and escalate if not responded within 4 hours.
+```
+
+That's it. Periscope will create, deploy, and test your workflow automatically.
+
+## All Commands
+
+| Command | What It Does |
+|---------|--------------|
+| `/generate` | **Create a complete process from description** (start here!) |
+| `/workflow` | Start, monitor, or manage running workflows |
+| `/task` | View and complete tasks assigned to you |
+| `/analyze` | Diagnose issues when something goes wrong |
+| `/optimize` | Improve performance and reduce costs |
+| `/status` | Check if everything is running |
+
+### For Advanced Users
+
+| Command | What It Does |
+|---------|--------------|
+| `/process` | Design BPMN processes manually |
 | `/agent` | Create and configure AI agents |
-| `/task` | View and complete human tasks assigned to you |
-| `/deploy` | Deploy a process to Temporal |
-| `/status` | Check platform health and system status |
+| `/function` | Create Python script functions |
+| `/deploy` | Deploy processes to Temporal |
 
-## Platform Overview
+## How It Works
 
-Periscope combines:
-- **Temporal** - Durable workflow execution
-- **BPMN-JS** - Visual process modeling
-- **PydanticAI** - Type-safe AI agents
-- **Multi-Protocol** - MCP, A2A, AG-UI communication
+```
+Your Description → AI Understanding → Process Design → Auto-Deploy → Running Workflow
+     ↑                                                                      │
+     └──────────────── Analyze & Optimize ←─────────────────────────────────┘
+```
 
-## Available Agents
+**You focus on**: What your business needs
+**AI handles**: BPMN, agents, functions, deployment, testing
 
-This workspace uses specialized agents with focused tool access:
+## Example Workflows
 
-| Agent | Use For |
-|-------|---------|
-| `workflow-operator` | Start workflows, monitor execution, handle signals |
-| `process-designer` | Create BPMN processes, validate, deploy |
-| `agent-manager` | Register AI agents, configure MCP servers |
-| `task-handler` | Claim, complete, delegate human tasks |
-| `integration-specialist` | Email, documents, protocol coordination |
-| `system-admin` | Worker management, user administration |
+### Expense Approval
+```
+/generate Expense approval where employees submit with receipts.
+Under $100 auto-approve, $100-500 needs manager, over $500 needs finance.
+Notify via Slack at each stage.
+```
 
-## Workspace Structure
+### Document Processing
+```
+/generate When invoices arrive by email, extract vendor and amount,
+match against purchase orders, flag variances over 5% for review.
+```
+
+### Customer Onboarding
+```
+/generate Customer onboarding that collects documents, verifies identity,
+sets up account, and schedules welcome call. Send progress emails.
+```
+
+### IT Ticket Triage
+```
+/generate IT support tickets classified by type and urgency, routed to
+appropriate team, with escalation if no response in 2 hours.
+```
+
+## Your Workspace
 
 ```
 workspace/
-├── processes/    # Your BPMN process definitions
-├── agents/       # Your AI agent configurations
-└── workflows/    # Your workflow templates
+├── processes/    # Your process definitions (auto-generated)
+├── agents/       # AI agent configurations (auto-generated)
+└── workflows/    # Workflow templates and history
+
+docs/
+├── learnings/    # Session learnings and discoveries
+├── known-issues.md  # Platform bugs and workarounds
+└── *.md          # Reference documentation
 ```
 
-## MCP Server Endpoints
+## Capturing Learnings
 
-All services are available at `https://api.superagent.studio/mcp/`:
+**Important**: Document learnings to improve future interactions.
 
-| Service | Endpoint | Tools |
-|---------|----------|-------|
-| Workflows | `/mcp/workflows` | 27 |
-| Processes | `/mcp/processes` | 25 |
-| Tasks | `/mcp/tasks` | 10 |
-| Agents | `/mcp/agents-core` | 27 |
-| MCP Servers | `/mcp/mcp-servers` | 15 |
-| Protocols | `/mcp/protocols` | 28 |
-| Email | `/mcp/email` | 5 |
-| Documents | `/mcp/documents` | 15 |
-| Users | `/mcp/users` | 5 |
-| System | `/mcp/system` | 3 |
+### When to Capture Learnings
+
+- After completing a `/generate` workflow (successes and failures)
+- When discovering a platform bug or workaround
+- When finding a better pattern or approach
+- When resolving a tricky issue
+
+### How to Document
+
+Create a timestamped file in `docs/learnings/`:
+```
+docs/learnings/YYYY-MM-DD-short-description.md
+```
+
+Use the template at `docs/learnings/_TEMPLATE.md`. Include:
+- **Problem**: What was the challenge?
+- **Solution**: How was it resolved?
+- **How to Apply**: Steps for future use
+
+### Update Known Issues
+
+If a bug is found or resolved, update `docs/known-issues.md`:
+- New bugs → Add with status "Open Bug"
+- Resolved bugs → Mark as "RESOLVED" with solution
+
+## What Periscope Uses
+
+Behind the scenes:
+- **Temporal** - Makes your workflows reliable and resumable
+- **AI Agents** - Understand documents, make decisions, communicate
+- **Script Functions** - Handle calculations and validations
+- **BPMN** - Industry-standard process notation
+
+You don't need to know any of this to use Periscope.
 
 ## Getting Help
 
-- See `docs/getting-started.md` for setup instructions
-- See `docs/mcp-tools-reference.md` for available tools
-- See `examples/` for sample configurations
+- **Something not working?** → `/analyze [workflow-id]`
+- **Want it faster/cheaper?** → `/optimize [process-name]`
+- **Check system health** → `/status`
+- **See examples** → Look in `examples/` folder
+
+## Platform Connection
+
+Your workspace connects to: `https://api.superagent.studio`
+
+~69 MCP tools are available across 9 servers. Just describe what you need.

@@ -12,10 +12,9 @@ Use this skill to start, monitor, and manage workflow executions in the Periscop
 
 1. **Start workflows** - Execute a workflow with input data
 2. **Monitor execution** - Check status and progress
-3. **Cancel workflows** - Stop running workflows
-4. **Send signals** - Trigger workflow events
-5. **Schedule workflows** - Plan future executions
-6. **Batch operations** - Run multiple workflows at once
+3. **Send signals** - Trigger workflow events
+4. **Schedule workflows** - Plan future executions
+5. **Use triggers** - Start workflows via signals, messages, or webhooks
 
 ## How to Use
 
@@ -54,7 +53,7 @@ Run at: 2024-01-15 09:00 UTC
 
 ## Workflow Types
 
-View available workflows with `get_workflow_registry`:
+Common workflow types available:
 
 | Workflow | Task Queue | Purpose |
 |----------|------------|---------|
@@ -73,8 +72,13 @@ View available workflows with `get_workflow_registry`:
 | cancelled | Manually cancelled |
 | timed_out | Exceeded timeout |
 
+## Reference Documentation
+
+- [Temporal Concepts](../../../docs/temporal-concepts.md) - Workflow fundamentals
+- [Queues and Workers](../../../docs/queues-and-workers.md) - Task queue configuration
+
 ## Delegated Agent
 
 This skill delegates to the **workflow-operator** agent which has access to:
-- `periscope-workflows-dev` MCP server (27 tools)
-- `periscope-tasks-dev` MCP server (10 tools)
+- `periscope-workflows-dev` MCP server (18 tools)
+- `periscope-tasks-dev` MCP server (~11 tools)

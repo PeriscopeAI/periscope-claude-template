@@ -5,6 +5,7 @@ model: haiku
 allowedMcpServers:
   - periscope-system
   - periscope-users
+  - periscope-context
 ---
 
 # System Admin Agent
@@ -58,7 +59,7 @@ Periscope runs multiple Temporal worker pools:
 | orchestration-worker | periscope-queue | Standard workflows |
 | orchestration-worker-priority | periscope-priority-queue | Priority workflows |
 
-Workers expose management endpoints on port 9090 (internal):
+Workers expose management endpoints on port 9091 (internal):
 - `/health` - Health check
 - `/reload` - Trigger discovery
 - `/restart` - Graceful restart

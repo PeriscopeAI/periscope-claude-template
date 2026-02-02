@@ -59,10 +59,43 @@ Simply describe the business process you want to create. For example:
 
 [Continues with design...]
 
+## Reference Documentation
+
+- [BPMN Extensions Reference](../../../docs/bpmn-extensions-reference.md) - All Periscope extension elements
+- [BPMN Format Requirements](../../../docs/bpmn-format-requirements.md) - Validation rules and supported elements
+- [Variables and Data Flow](../../../docs/variables-and-data-flow.md) - Process variable management
+
 ## Delegated Agent
 
 This skill delegates to the **process-designer** agent which has access to:
-- `periscope-processes-dev` MCP server (25 tools)
+- `periscope-processes-dev` MCP server (18 tools)
+- `periscope-context-dev` MCP server (5 tools)
+
+## Local Validation Script
+
+Before uploading, validate BPMN files locally to catch errors early:
+
+```bash
+python3 .claude/skills/process/scripts/validate-bpmn.py <file.bpmn>
+# or with uv
+uv run python .claude/skills/process/scripts/validate-bpmn.py <file.bpmn>
+```
+
+**Validation levels:**
+1. XML well-formedness
+2. BPMN schema basics
+3. Structure (start/end events, unique IDs)
+4. Flow connectivity
+5. Periscope rules (AI agents, functions configured)
+
+## File Upload Flow (Required for BPMN)
+
+After validation passes, use the file upload flow:
+1. `request_bpmn_upload` → get pre-signed URL
+2. Upload file directly to MinIO (pre-signed URL, no auth needed)
+3. `create_process_from_file_ref` with file_id
+
+This is the only way to create/update processes via MCP.
 
 ## Output
 

@@ -1,91 +1,179 @@
 # Periscope Claude Workspace
 
-A Claude Code workspace template for interacting with the **Periscope** Agentic Business Workflow Orchestration platform.
+**From idea to running business process in minutes.**
 
-## Features
+A Claude Code workspace template for the **Periscope** Agentic Business Workflow Orchestration platform.
 
-- **6 Specialized Agents** with focused MCP tool access
-- **6 Skills (Slash Commands)** for common operations
-- **160+ MCP Tools** organized by domain
-- **Examples** for processes, agents, and workflows
-- **Documentation** for quick reference
+## What You Can Do
+
+Describe a business process in plain English, and Periscope will:
+
+1. **Understand** your requirements
+2. **Design** the process flow
+3. **Create** AI agents for intelligent tasks
+4. **Deploy** to production
+5. **Run** a test to verify it works
+
+No coding. No configuration. Just describe what you need.
 
 ## Quick Start
 
-1. **Clone/Copy this template**:
+1. **Open with Claude Code**:
    ```bash
-   cp -r periscope-claude-template ~/my-periscope-workspace
-   cd ~/my-periscope-workspace
-   ```
-
-2. **Configure authentication**:
-   ```bash
-   export PERISCOPE_TOKEN="your-keycloak-token"
-   ```
-
-3. **Open with Claude Code**:
-   ```bash
+   cd periscope-claude-workspace
    claude
    ```
 
-4. **Check platform status**:
+2. **Create your first process**:
    ```
-   /status
+   /generate When a customer submits a refund request, check their
+   order history, approve automatically if under $50 and good standing,
+   otherwise route to customer service for review.
    ```
 
-## Available Skills
+3. **Watch it deploy** - You'll see each step as the AI creates your workflow.
 
-| Skill | Description |
-|-------|-------------|
-| `/process` | Design BPMN business processes |
-| `/workflow` | Execute and monitor workflows |
-| `/agent` | Create AI agents |
-| `/task` | Manage human tasks |
-| `/deploy` | Deploy processes to Temporal |
+4. **Start using it**:
+   ```
+   /workflow start refund-request {"order_id": "12345", "reason": "defective"}
+   ```
+
+## Commands
+
+### Primary (Start Here)
+
+| Command | Purpose |
+|---------|---------|
+| `/generate` | Create a complete process from natural language |
+| `/workflow` | Start and monitor workflow executions |
+| `/task` | Handle tasks that need your attention |
+
+### Operations
+
+| Command | Purpose |
+|---------|---------|
+| `/analyze` | Diagnose problems and understand failures |
+| `/optimize` | Improve speed and reduce costs |
 | `/status` | Check platform health |
 
-## Agent Architecture
+### Advanced (Optional)
 
-Each agent has access to specific MCP servers to minimize context usage:
+| Command | Purpose |
+|---------|---------|
+| `/process` | Manually design BPMN processes |
+| `/agent` | Configure AI agents directly |
+| `/function` | Create Python script functions |
+| `/deploy` | Manual deployment control |
 
-| Agent | MCP Servers | Tools |
-|-------|-------------|-------|
-| workflow-operator | workflows, tasks | ~37 |
-| process-designer | processes | ~25 |
-| agent-manager | agents, mcp-servers | ~42 |
-| task-handler | tasks, users | ~15 |
-| integration-specialist | protocols, email, documents | ~48 |
-| system-admin | system, users | ~8 |
+## Example Processes
+
+### Finance
+```
+/generate Invoice approval where amounts under $1000 auto-approve,
+$1000-10000 needs manager, over $10000 needs CFO. Match against POs
+and flag discrepancies.
+```
+
+### HR
+```
+/generate Employee onboarding that collects documents, runs background
+check, provisions IT accounts, assigns buddy, and schedules orientation.
+Track progress and notify HR if stuck.
+```
+
+### Operations
+```
+/generate Order fulfillment that validates inventory, processes payment,
+assigns to warehouse, tracks shipping, and handles delivery confirmation.
+Alert if any step takes too long.
+```
+
+### Customer Service
+```
+/generate Support ticket routing that classifies by type and urgency,
+routes to specialists, escalates if no response in 2 hours, and surveys
+customer after resolution.
+```
+
+## How It Works
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                        YOUR DESCRIPTION                              │
+│  "When an invoice arrives, extract data, validate against PO..."    │
+└─────────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                      PERISCOPE AI AGENTS                            │
+│                                                                      │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                 │
+│  │ Understand  │→ │   Design    │→ │   Create    │                 │
+│  │ Requirements│  │   Process   │  │ Components  │                 │
+│  └─────────────┘  └─────────────┘  └─────────────┘                 │
+│                                            │                         │
+│                          ┌─────────────────┼─────────────────┐      │
+│                          ▼                 ▼                 ▼      │
+│                   ┌──────────┐      ┌──────────┐      ┌──────────┐ │
+│                   │AI Agents │      │Functions │      │   BPMN   │ │
+│                   └──────────┘      └──────────┘      └──────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                      RUNNING WORKFLOW                                │
+│                                                                      │
+│  [Start] → [Extract] → [Validate] → [Decision] → [Approve/Review]  │
+│                                                                      │
+│  Deployed on Temporal • Self-healing • Observable • Optimizable     │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
 ## Directory Structure
 
 ```
-periscope-claude-template/
-├── CLAUDE.md                    # Main instructions
-├── .mcp.json                    # MCP server configs
+periscope-claude-workspace/
+├── CLAUDE.md                    # Quick reference
+├── .mcp.json                    # Platform connection
 ├── .claude/
-│   ├── settings.json            # Claude Code settings
-│   ├── agents/                  # 6 specialized agents
-│   └── skills/                  # 6 slash commands
+│   └── skills/                  # Available commands
+│       ├── generate/            # /generate - create processes
+│       ├── workflow/            # /workflow - execute
+│       ├── task/                # /task - human tasks
+│       ├── analyze/             # /analyze - diagnose
+│       ├── optimize/            # /optimize - improve
+│       └── ...
 ├── workspace/                   # Your work area
-│   ├── processes/               # BPMN files
-│   ├── agents/                  # Agent configs
-│   └── workflows/               # Workflow templates
+│   ├── processes/               # Generated BPMN (auto-managed)
+│   ├── agents/                  # AI configurations (auto-managed)
+│   └── workflows/               # Templates and history
 ├── examples/                    # Sample configurations
-└── docs/                        # Documentation
+└── docs/                        # Help documentation
 ```
 
 ## Requirements
 
 - Claude Code CLI
-- Periscope platform running
-- Keycloak authentication token
+- Periscope platform access
+- Authentication token (see docs/getting-started.md)
+
+## What Periscope Creates For You
+
+When you `/generate` a process, the platform automatically:
+
+| Component | Purpose | You See |
+|-----------|---------|---------|
+| BPMN Process | Visual workflow definition | Diagram in dashboard |
+| AI Agents | Handle intelligent tasks | "Extracting invoice data..." |
+| Functions | Calculations, validations | Instant results |
+| User Tasks | Human decision points | Items in your task list |
+| Notifications | Slack, email updates | Messages when things happen |
 
 ## Documentation
 
-- [Getting Started](docs/getting-started.md)
-- [MCP Tools Reference](docs/mcp-tools-reference.md)
-- [Troubleshooting](docs/troubleshooting.md)
+- [Getting Started](docs/getting-started.md) - Setup and authentication
+- [MCP Tools Reference](docs/mcp-tools-reference.md) - All available tools
+- [Troubleshooting](docs/troubleshooting.md) - Common issues
 
 ## License
 

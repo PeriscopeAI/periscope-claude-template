@@ -68,19 +68,16 @@ Describe the AI agent you want to create:
 }
 ```
 
-## Prompt Assistance
+## Reference Documentation
 
-The agent can help you with prompts:
-
-- **Generate**: Create a prompt from description
-- **Improve**: Enhance an existing prompt
-- **Review**: Get feedback on your prompt
+- [MCP Tools Reference](../../../docs/mcp-tools-reference.md) - Available MCP servers and tools
 
 ## Delegated Agent
 
 This skill delegates to the **agent-manager** agent which has access to:
-- `periscope-agents-dev` MCP server (27 tools)
-- `periscope-mcp-servers-dev` MCP server (15 tools)
+- `periscope-agents-core-dev` MCP server (15 tools)
+- `periscope-mcp-servers-dev` MCP server (13 tools)
+- `periscope-context-dev` MCP server (5 tools)
 
 ## Output
 

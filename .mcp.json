@@ -3,52 +3,52 @@
     "periscope-workflows": {
       "type": "http",
       "url": "https://api.superagent.studio/mcp/workflows",
-      "description": "Workflow execution, monitoring, scheduling, and triggers"
+      "description": "Workflow execution, monitoring, scheduling, and triggers (18 tools)"
     },
     "periscope-processes": {
       "type": "http",
       "url": "https://api.superagent.studio/mcp/processes",
-      "description": "BPMN process design, validation, versioning, and deployment"
+      "description": "BPMN process design via file upload, versioning, and deployment (18 tools)"
     },
     "periscope-tasks": {
       "type": "http",
       "url": "https://api.superagent.studio/mcp/tasks",
-      "description": "Human task management for workflow interactions"
+      "description": "Human task management for workflow interactions (~11 tools)"
     },
-    "periscope-agents": {
+    "periscope-agents-core": {
       "type": "http",
       "url": "https://api.superagent.studio/mcp/agents-core",
-      "description": "AI agent creation, configuration, and execution"
+      "description": "AI agent creation, configuration, and execution (15 tools)"
     },
     "periscope-mcp-servers": {
       "type": "http",
       "url": "https://api.superagent.studio/mcp/mcp-servers",
-      "description": "MCP server configuration and agent-to-server assignments"
+      "description": "MCP server configuration and agent-to-server assignments (~13 tools)"
     },
-    "periscope-protocols": {
+    "periscope-script-functions": {
       "type": "http",
-      "url": "https://api.superagent.studio/mcp/protocols",
-      "description": "Multi-protocol communication (A2A, AG-UI, MCP routing)"
+      "url": "https://api.superagent.studio/mcp/script-functions",
+      "description": "Reusable Python script functions for workflows (13 tools)"
     },
     "periscope-email": {
       "type": "http",
       "url": "https://api.superagent.studio/mcp/email",
-      "description": "Email sending and template management"
-    },
-    "periscope-documents": {
-      "type": "http",
-      "url": "https://api.superagent.studio/mcp/documents",
-      "description": "Document uploads and sandboxed script functions"
+      "description": "Email sending and template management (~5 tools)"
     },
     "periscope-users": {
       "type": "http",
       "url": "https://api.superagent.studio/mcp/users",
-      "description": "User lookup and management via Keycloak"
+      "description": "User lookup and management via Keycloak (~6 tools)"
     },
     "periscope-system": {
       "type": "http",
       "url": "https://api.superagent.studio/mcp/system",
-      "description": "System administration and worker management"
+      "description": "System administration and worker management (~3 tools)"
+    },
+    "periscope-context": {
+      "type": "http",
+      "url": "https://api.superagent.studio/mcp/context",
+      "description": "Organization and project context switching (5 tools)"
     }
   }
 }

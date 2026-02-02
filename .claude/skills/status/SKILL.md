@@ -90,6 +90,11 @@ docker compose -f docker/docker-compose.yml ps periscope-db
 docker compose -f docker/docker-compose.yml logs periscope-db
 ```
 
+## Reference Documentation
+
+- [Troubleshooting Guide](../../../docs/troubleshooting.md) - Common issues and fixes
+- [Queues and Workers](../../../docs/queues-and-workers.md) - Task queue configuration
+
 ## Delegated Agent
 
 This skill delegates to the **system-admin** agent which has access to:

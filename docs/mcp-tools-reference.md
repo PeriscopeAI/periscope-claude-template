@@ -4,57 +4,46 @@ This document provides a quick reference for all MCP tools available in the Peri
 
 ## Overview
 
-| MCP Server | Tools | Agent |
-|------------|-------|-------|
-| periscope-workflows-dev | 27 | workflow-operator |
-| periscope-processes-dev | 25 | process-designer |
-| periscope-tasks-dev | 10 | workflow-operator, task-handler |
-| periscope-agents-dev | 27 | agent-manager |
-| periscope-mcp-servers-dev | 15 | agent-manager |
-| periscope-protocols-dev | 28 | integration-specialist |
-| periscope-email-dev | 5 | integration-specialist |
-| periscope-documents-dev | 15 | integration-specialist |
-| periscope-users-dev | 5 | task-handler, system-admin |
-| periscope-system-dev | 3 | system-admin |
+| MCP Server | MCP Tools | REST-Only | Agent |
+|------------|-----------|-----------|-------|
+| periscope-workflows-dev | 18 | 9 | workflow-operator |
+| periscope-processes-dev | 18 | 7 | process-designer |
+| periscope-tasks-dev | ~11 | - | workflow-operator, task-handler |
+| periscope-agents-core-dev | 15 | - | agent-manager |
+| periscope-mcp-servers-dev | ~13 | - | agent-manager |
+| periscope-script-functions-dev | 13 | - | integration-specialist |
+| periscope-email-dev | ~5 | - | integration-specialist |
+| periscope-users-dev | ~6 | - | task-handler, system-admin |
+| periscope-system-dev | ~3 | - | system-admin |
+| periscope-context-dev | 5 | - | all agents |
 
-**Total: ~160 tools**
+**Total: ~69 MCP tools** (REST-only tools remain accessible via HTTP API)
+
+> **Note:** `periscope-protocols-dev` is currently disabled to reduce tool bloat. Protocol operations remain available via REST API.
 
 ---
 
 ## Workflow Tools (periscope-workflows-dev)
 
-### Registry & Discovery
-| Tool | Description |
-|------|-------------|
-| `get_workflow_registry` | List registered workflow types |
-| `list_workflows` | List workflow executions |
-| `validate_expression` | Validate gateway conditions |
-| `get_workflow_stats` | Get execution statistics |
+### MCP Tools (18)
 
-### Workflow CRUD
+#### Workflow Operations
 | Tool | Description |
 |------|-------------|
+| `list_workflows` | List workflow executions |
 | `create_workflow` | Start new workflow |
 | `get_workflow_status` | Get workflow status |
-| `cancel_workflow` | Cancel running workflow |
 | `signal_workflow` | Send signal to workflow |
+| `get_workflow_history` | Get Temporal history |
+| `validate_expression` | Validate gateway conditions |
 | `search_workflows` | Search executions |
 
-### History & Batch
-| Tool | Description |
-|------|-------------|
-| `get_workflow_history` | Get Temporal history |
-| `execute_batch_workflows` | Run multiple workflows |
-| `get_batch_status` | Check batch progress |
-
-### Scheduling
+#### Scheduling
 | Tool | Description |
 |------|-------------|
 | `schedule_workflow` | Schedule future execution |
-| `list_scheduled_workflows` | List scheduled |
-| `cancel_scheduled_workflow` | Cancel scheduled |
 
-### Triggers
+#### Triggers
 | Tool | Description |
 |------|-------------|
 | `list_signal_triggers` | List signal triggers |
@@ -63,56 +52,92 @@ This document provides a quick reference for all MCP tools available in the Peri
 | `trigger_workflow_by_message` | Start by message |
 | `webhook_trigger` | External webhook |
 
+#### State Management
+| Tool | Description |
+|------|-------------|
+| `get_workflow_state` | Get workflow state snapshot |
+| `create_checkpoint` | Create state checkpoint |
+| `get_state_history` | Get state transition history |
+| `get_state_analytics` | Get state analytics |
+
+### REST-Only Tools (9)
+
+| Tool | Description | Reason |
+|------|-------------|--------|
+| `get_workflow_registry` | List registered workflow types | Admin/discovery |
+| `delete_workflow` | Delete workflow execution | Destructive operation |
+| `get_workflow_stats` | Get execution statistics | Admin analytics |
+| `execute_batch_workflows` | Run multiple workflows | Complex operation |
+| `get_batch_status` | Check batch progress | Accompanies batch |
+| `cancel_scheduled_workflow` | Cancel scheduled | Destructive operation |
+| `stream_workflow_status` | SSE streaming | Streaming endpoint |
+| `restore_checkpoint` | Restore from checkpoint | State-modifying |
+| `state_management_health` | Health check | Admin health check |
+
 ---
 
 ## Process Tools (periscope-processes-dev)
 
-### Process CRUD
+### MCP Tools (18)
+
+#### File Upload (Token-Efficient - Recommended)
 | Tool | Description |
 |------|-------------|
-| `create_process` | Create process definition |
+| `request_bpmn_upload` | Get pre-signed URL for BPMN upload |
+| `create_process_from_file_ref` | Create process from uploaded file |
+| `update_process_from_file_ref` | Update process from uploaded file |
+
+> **Token Efficiency**: Use file upload flow (~70 tokens) instead of inline BPMN (~250+ tokens) for large files.
+> 1. Call `request_bpmn_upload` to get upload URL
+> 2. Upload file directly to MinIO via pre-signed URL
+> 3. Call `create_process_from_file_ref` with file_id
+
+#### Process Operations
+| Tool | Description |
+|------|-------------|
 | `list_processes` | List processes |
 | `get_process` | Get process by ID |
-| `update_process` | Update process |
-| `delete_process` | Delete process |
 | `get_process_bpmn` | Get BPMN XML |
-
-### Lifecycle
-| Tool | Description |
-|------|-------------|
 | `archive_process` | Archive (soft delete) |
 | `unarchive_process` | Restore archived |
 
-### Versions
+#### Versions
 | Tool | Description |
 |------|-------------|
 | `get_process_versions` | Version history |
 | `get_process_version_detail` | Version details |
-| `get_process_stats` | Execution stats |
 
-### BPMN Operations
+#### BPMN Operations
 | Tool | Description |
 |------|-------------|
-| `validate_bpmn` | Validate BPMN XML |
-| `convert_bpmn_process` | Convert to Temporal |
+| `validate_bpmn_from_file_ref` | Validate BPMN from uploaded file |
+| `convert_bpmn_from_file_ref` | Convert from uploaded file |
 | `get_async_conversion_status` | Check conversion |
 
-### Deployment
+#### Deployment
 | Tool | Description |
 |------|-------------|
 | `deploy_process` | Deploy to Temporal |
-| `list_deployments` | List deployments |
+| `get_process_deployments` | Get deployment history |
+| `list_deployments` | List all deployments |
 | `get_deployment_info` | Deployment details |
-| `undeploy_workflow` | Remove deployment |
-| `redeploy_workflow` | Redeploy |
-
-### Health
-| Tool | Description |
-|------|-------------|
-| `get_deployment_health` | Deployment health |
-| `get_worker_status` | Worker status |
-| `get_dynamic_discovery_stats` | Discovery stats |
 | `force_discovery_check` | Force discovery |
+| `get_worker_status` | Worker status |
+| `get_deployment_health` | Deployment health |
+
+### REST-Only Tools (7)
+
+| Tool | Description | Reason |
+|------|-------------|--------|
+| `create_process` | Create process (inline BPMN) | Token-inefficient |
+| `update_process` | Update process (inline BPMN) | Token-inefficient |
+| `validate_bpmn` | Validate inline BPMN XML | Token-inefficient |
+| `convert_bpmn_process` | Convert inline BPMN | Token-inefficient |
+| `get_process_stats` | Execution statistics | Admin analytics |
+| `get_discovery_stats` | Discovery statistics | Admin analytics |
+| `get_deployment_stats` | Deployment statistics | Admin analytics |
+| `undeploy_workflow` | Remove deployment | Destructive operation |
+| `redeploy_workflow` | Redeploy | Admin operation |
 
 ---
 
@@ -146,7 +171,7 @@ This document provides a quick reference for all MCP tools available in the Peri
 
 ---
 
-## Agent Tools (periscope-agents-dev)
+## Agent Tools (periscope-agents-core-dev)
 
 ### Lifecycle
 | Tool | Description |
@@ -215,9 +240,11 @@ This document provides a quick reference for all MCP tools available in the Peri
 
 ---
 
-## Protocol Tools (periscope-protocols-dev)
+## Protocol Tools (periscope-protocols-dev) - DISABLED
 
-### A2A Coordination
+> **Note:** This MCP server is currently disabled to reduce tool bloat for AI assistants. Protocol operations remain available via REST API at `http://localhost:8002/api/v1/protocols/`.
+
+### A2A Coordination (REST-only)
 | Tool | Description |
 |------|-------------|
 | `discover_a2a_agents` | Find agents |
@@ -227,7 +254,7 @@ This document provides a quick reference for all MCP tools available in the Peri
 | `get_coordination_task` | Get task |
 | `list_coordination_workflows` | List workflows |
 
-### AG-UI
+### AG-UI (REST-only)
 | Tool | Description |
 |------|-------------|
 | `stream_ag_ui_response` | SSE streaming |
@@ -235,7 +262,7 @@ This document provides a quick reference for all MCP tools available in the Peri
 | `pause_session` | Pause session |
 | `resume_session` | Resume session |
 
-### Routing
+### Routing (REST-only)
 | Tool | Description |
 |------|-------------|
 | `route_protocol_message` | Route message |
@@ -256,15 +283,8 @@ This document provides a quick reference for all MCP tools available in the Peri
 
 ---
 
-## Document Tools (periscope-documents-dev)
+## Script Functions Tools (periscope-script-functions-dev)
 
-### Documents
-| Tool | Description |
-|------|-------------|
-| `documents_health` | Health check |
-| `upload_document` | Upload to S3 |
-
-### Script Functions
 | Tool | Description |
 |------|-------------|
 | `create_function` | Create function |
@@ -304,3 +324,17 @@ This document provides a quick reference for all MCP tools available in the Peri
 | `restart_workers` | Restart workers |
 
 **Note**: Requires `system_administrator` role.
+
+---
+
+## Context Tools (periscope-context-dev)
+
+| Tool | Description |
+|------|-------------|
+| `list_my_organizations` | List user's organizations |
+| `list_my_projects` | List accessible projects |
+| `get_current_context` | Get active org/project context |
+| `set_context` | Set default org/project context |
+| `clear_context` | Clear stored context |
+
+**Note**: Context is stored in Redis with 30-day TTL. Used by MCP clients to maintain tenant context across requests.
