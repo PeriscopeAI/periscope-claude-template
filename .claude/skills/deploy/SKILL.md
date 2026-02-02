@@ -84,6 +84,11 @@ After successful deployment:
 2. **Monitor execution** - Check Temporal UI
 3. **Handle tasks** - Use `/task` skill
 
+## Reference Documentation
+
+- [Temporal Concepts](../../../docs/temporal-concepts.md) - Workflow fundamentals
+- [Queues and Workers](../../../docs/queues-and-workers.md) - Task queue configuration
+
 ## Delegated Agent
 
 This skill delegates to the **process-designer** agent which has access to:

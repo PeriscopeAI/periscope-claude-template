@@ -78,7 +78,41 @@ workspace/
 ├── processes/    # Your process definitions (auto-generated)
 ├── agents/       # AI agent configurations (auto-generated)
 └── workflows/    # Workflow templates and history
+
+docs/
+├── learnings/    # Session learnings and discoveries
+├── known-issues.md  # Platform bugs and workarounds
+└── *.md          # Reference documentation
 ```
+
+## Capturing Learnings
+
+**Important**: Document learnings to improve future interactions.
+
+### When to Capture Learnings
+
+- After completing a `/generate` workflow (successes and failures)
+- When discovering a platform bug or workaround
+- When finding a better pattern or approach
+- When resolving a tricky issue
+
+### How to Document
+
+Create a timestamped file in `docs/learnings/`:
+```
+docs/learnings/YYYY-MM-DD-short-description.md
+```
+
+Use the template at `docs/learnings/_TEMPLATE.md`. Include:
+- **Problem**: What was the challenge?
+- **Solution**: How was it resolved?
+- **How to Apply**: Steps for future use
+
+### Update Known Issues
+
+If a bug is found or resolved, update `docs/known-issues.md`:
+- New bugs → Add with status "Open Bug"
+- Resolved bugs → Mark as "RESOLVED" with solution
 
 ## What Periscope Uses
 

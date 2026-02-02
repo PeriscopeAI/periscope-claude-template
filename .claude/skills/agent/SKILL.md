@@ -68,6 +68,10 @@ Describe the AI agent you want to create:
 }
 ```
 
+## Reference Documentation
+
+- [MCP Tools Reference](../../../docs/mcp-tools-reference.md) - Available MCP servers and tools
+
 ## Delegated Agent
 
 This skill delegates to the **agent-manager** agent which has access to:

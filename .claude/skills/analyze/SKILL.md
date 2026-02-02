@@ -176,6 +176,11 @@ The extraction agent is using `gpt-4o` which is accurate but slow for this task.
 
 Want me to update the agent configuration?
 
+## Reference Documentation
+
+- [Troubleshooting Guide](../../../docs/troubleshooting.md) - Common issues and fixes
+- [Temporal Concepts](../../../docs/temporal-concepts.md) - Workflow fundamentals
+
 ## Delegated Agent
 
 This skill delegates to the **workflow-operator** agent which has access to:

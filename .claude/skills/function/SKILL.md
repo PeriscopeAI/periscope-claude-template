@@ -238,6 +238,10 @@ When creating functions, define schemas for validation:
 | `publish_version` | Publish for workflow use |
 | `list_versions` | Get version history |
 
+## Reference Documentation
+
+- [Script Functions Guide](../../../docs/script-functions-guide.md) - Complete guide with security sandbox details
+
 ## Output
 
 Functions are stored in the Periscope database and can be:

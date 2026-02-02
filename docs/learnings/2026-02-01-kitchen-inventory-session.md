@@ -17,15 +17,14 @@ This document captures learnings from working with the Periscope platform.
 **Learning 2: Context Propagation Issues**
 - Issue discovered: Setting context via `set_context` may not propagate to all MCP servers
 - The `script-functions` server returned `project_id: null` despite context being set
-- **Workaround needed**: Some APIs may require explicit org_id/project_id parameters
-- **Status**: Bug to investigate - context should auto-propagate but doesn't for script-functions
+- **Status**: ~~Bug~~ **RESOLVED** (2026-02-02) - All APIs now accept explicit org_id/project_id
 
 **Learning 2b: API Parameter Availability**
-| MCP Server | create has org_id/project_id? | Workaround |
-|------------|-------------------------------|------------|
+| MCP Server | create has org_id/project_id? | Status |
+|------------|-------------------------------|--------|
 | `periscope-agents-core` | YES | Use explicit params |
 | `periscope-processes` | YES | Use explicit params |
-| `periscope-script-functions` | NO (BUG) | Cannot create - blocked |
+| `periscope-script-functions` | YES | Fixed! Use explicit params |
 
 **Recommendation**: Always pass explicit `organization_id` and `project_id` when available.
 
@@ -229,4 +228,4 @@ Based on learnings from the Kitchen Inventory session, the following template im
 
 ---
 
-*Last updated: 2026-02-01 (Session 2: Template Improvements)*
+*Last updated: 2026-02-02 (Context propagation issue marked resolved)*

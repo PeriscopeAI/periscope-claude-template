@@ -59,6 +59,12 @@ Simply describe the business process you want to create. For example:
 
 [Continues with design...]
 
+## Reference Documentation
+
+- [BPMN Extensions Reference](../../../docs/bpmn-extensions-reference.md) - All Periscope extension elements
+- [BPMN Format Requirements](../../../docs/bpmn-format-requirements.md) - Validation rules and supported elements
+- [Variables and Data Flow](../../../docs/variables-and-data-flow.md) - Process variable management
+
 ## Delegated Agent
 
 This skill delegates to the **process-designer** agent which has access to:

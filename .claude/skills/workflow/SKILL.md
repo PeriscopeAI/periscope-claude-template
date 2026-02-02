@@ -72,6 +72,11 @@ Common workflow types available:
 | cancelled | Manually cancelled |
 | timed_out | Exceeded timeout |
 
+## Reference Documentation
+
+- [Temporal Concepts](../../../docs/temporal-concepts.md) - Workflow fundamentals
+- [Queues and Workers](../../../docs/queues-and-workers.md) - Task queue configuration
+
 ## Delegated Agent
 
 This skill delegates to the **workflow-operator** agent which has access to:

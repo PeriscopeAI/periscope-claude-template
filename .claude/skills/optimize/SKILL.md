@@ -145,3 +145,9 @@ When speed matters most:
 ```
 
 Get recommendations to hit a specific latency target.
+
+## Reference Documentation
+
+- [Temporal Concepts](../../../docs/temporal-concepts.md) - Workflow fundamentals
+- [Queues and Workers](../../../docs/queues-and-workers.md) - Task queue configuration
+- [Troubleshooting Guide](../../../docs/troubleshooting.md) - Common issues and fixes

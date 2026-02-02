@@ -179,3 +179,10 @@ anything over $5000
 ```
 
 The AI will modify the existing process while preserving what works.
+
+## Reference Documentation
+
+- [BPMN Format Requirements](../../../docs/bpmn-format-requirements.md) - Validation rules and supported elements
+- [BPMN Extensions Reference](../../../docs/bpmn-extensions-reference.md) - All Periscope extension elements
+- [Script Functions Guide](../../../docs/script-functions-guide.md) - Function creation and constraints
+- [Variables and Data Flow](../../../docs/variables-and-data-flow.md) - Process variable management
